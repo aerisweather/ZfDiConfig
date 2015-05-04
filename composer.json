@@ -1,0 +1,26 @@
+{
+	"name": "aeris/zf-di-config",
+	"version": "1.0.0",
+	"description": "Configurable dependency injection for the ZF2 ServiceManager",
+	"license": "See LICENSE.txt",
+	"keywords": [
+		"ZF2",
+		"Zend Framework 2",
+        "ServiceManager",
+        "Dependency Injection"
+	],
+	"homepage": "http://www.aerisweather.com/",
+	"require": {
+		"php": ">=5.3.3",
+		"zendframework/zendframework": "2.3.*"
+	},
+	"require-dev": {
+		"mockery/mockery": "~0.9"
+	},
+	"autoload": {
+		"psr-4": {
+			"Aeris\\ZfDiConfig": "src"
+		}
+	},
+	"minimum-stability1": "dev"
+}
