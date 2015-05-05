@@ -9,7 +9,7 @@ use Aeris\ZfDiConfig\ServiceManager\DiConfig;
 use Aeris\ZfDiConfigTest\ServiceManager\Mock\FooService;
 use Zend\ServiceManager\ServiceManager;
 
-class DiConfigTest extends \PHPUnit_Framework_TestCase {
+class DiConfigIntegrationTest extends \PHPUnit_Framework_TestCase {
 
 	/** @var ServiceManager */
 	protected $serviceManager;
