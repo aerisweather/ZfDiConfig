@@ -17,5 +17,9 @@ class FooService {
 		$this->bar = $bar;
 	}
 
+	public function getBar() {
+		return $this->bar;
+	}
+
 
 }
