@@ -2,7 +2,6 @@
 	"name": "aeris/zf-di-config",
 	"version": "1.0.0",
 	"description": "Configurable dependency injection for the ZF2 ServiceManager",
-	"license": "See LICENSE.txt",
 	"keywords": [
 		"ZF2",
 		"Zend Framework 2",
@@ -15,11 +14,13 @@
 		"zendframework/zendframework": "2.3.*"
 	},
 	"require-dev": {
-		"mockery/mockery": "~0.9"
+		"mockery/mockery": "~0.9",
+        "phpunit/phpunit": "~3.7"
 	},
 	"autoload": {
 		"psr-4": {
-			"Aeris\\ZfDiConfig": "src"
+			"Aeris\\ZfDiConfig\\": "src/ZfDiConfig/",
+            "Aeris\\ZfDiConfigTest\\": "test/ZfDiConfigTest/"
 		}
 	},
 	"minimum-stability1": "dev"
