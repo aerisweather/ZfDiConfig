@@ -49,6 +49,40 @@ class DiConfigIntegrationTest extends \PHPUnit_Framework_TestCase {
 		$this->assertInstanceOf('\Aeris\ZfDiConfigTest\ServiceManager\Mock\FooService',
 			$this->serviceManager->get('FooService'));
 	}
+	/** @test */
+	public function shouldCreateAServiceAsAnInstanceOfAClass_shortHand() {
+		$this->setUpDiConfig([
+			'FooService' => '\Aeris\ZfDiConfigTest\ServiceManager\Mock\FooService'
+		]);
+		$this->diConfig->configureServiceManager($this->serviceManager);
+
+		$this->assertInstanceOf('\Aeris\ZfDiConfigTest\ServiceManager\Mock\FooService',
+			$this->serviceManager->get('FooService'));
+	}
+
+	/** @test */
+	public function shouldAllowNestedPlugins() {
+		$this->setUpDiConfig([
+			'FooService' => [
+				'class' => '\Aeris\ZfDiConfigTest\ServiceManager\Mock\FooService',
+				'args' => [
+					[
+						'$factory' => [
+							'class' => '\Aeris\ZfDiConfigTest\ServiceManager\Mock\FooService'
+						]
+					]
+				]
+			]
+		]);
+		$this->diConfig->configureServiceManager($this->serviceManager);
+
+		/** @var FooService $fooService */
+		$fooService = $this->serviceManager->get('FooService');
+		$this->assertInstanceOf('\Aeris\ZfDiConfigTest\ServiceManager\Mock\FooService', $fooService);
+
+		$this->assertInstanceOf('\Aeris\ZfDiConfigTest\ServiceManager\Mock\FooService',
+			$fooService->constructorArgs[0]);
+	}
 
 	/** @test */
 	public function shouldInjectServicesAsCtorArgs() {

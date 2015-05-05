@@ -10,6 +10,10 @@ class FactoryPlugin extends AbstractConfigPlugin {
 	 * @return mixed
 	 */
 	public function resolve($config) {
+		if (is_string($config)) {
+			$config = $this->configFromString($config);
+		}
+
 		if (!isset($config['args'])) {
 			$service = new $config['class'];
 		}
