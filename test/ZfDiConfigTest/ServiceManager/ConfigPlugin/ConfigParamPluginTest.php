@@ -7,7 +7,7 @@ namespace Aeris\ZfDiConfigTest\ServiceManager\ConfigPlugin;
 use Aeris\ZfDiConfig\ServiceManager\ConfigPlugin\ConfigParamPlugin;
 use Zend\ServiceManager\ServiceManager;
 
-class ConfigParamPluginTest extends \PHPUnit_Framework_TestCase {
+class ConfigParamPluginTest extends ConfigPluginTestCase {
 
 	/** @var ServiceManager */
 	protected $serviceManager;
@@ -18,7 +18,6 @@ class ConfigParamPluginTest extends \PHPUnit_Framework_TestCase {
 	protected function setUp() {
 		parent::setUp();
 
-		$this->serviceManager = new ServiceManager();
 		$this->plugin = new ConfigParamPlugin();
 		$this->plugin->setServiceLocator($this->serviceManager);
 	}
@@ -80,7 +79,10 @@ class ConfigParamPluginTest extends \PHPUnit_Framework_TestCase {
 		]));
 	}
 
-	/** @test */
+	/**
+	 * @test
+	 * @expectedException \Aeris\ZfDiConfig\ServiceManager\Exception\InvalidConfigException
+	 */
 	public function resolve_shouldComplainIfTheConfigParamIsNotSet() {
 		$this->serviceManager->setService('config', [
 			'foo' => [
@@ -88,11 +90,9 @@ class ConfigParamPluginTest extends \PHPUnit_Framework_TestCase {
 			]
 		]);
 
-		$this->assertExceptionThrown('\Aeris\ZfDiConfig\ServiceManager\Exception\InvalidConfigException', function() {
-			$this->plugin->resolve([
-				'path' => 'foo.bar.faz'
-			]);
-		});
+		$this->plugin->resolve([
+			'path' => 'foo.bar.faz'
+		]);
 	}
 
 	/** @test */
@@ -114,22 +114,6 @@ class ConfigParamPluginTest extends \PHPUnit_Framework_TestCase {
 
 		$longConfig = $this->plugin->configFromString('foo.bar.faz');
 		$this->assertEquals('baz', $this->plugin->resolve($longConfig));
-	}
-
-	protected function assertExceptionThrown($exception, callable $cb) {
-		$caughtException = null;
-		try {
-			$cb();
-		}
-		catch (\Exception $ex) {
-			$caughtException = $ex;
-		}
-
-		$this->assertNotNull($caughtException,
-			"Expected exception $exception to be thrown, but no exception was thrown.");
-
-		$this->assertInstanceOf($exception, $caughtException,
-			"Expected exception $exception to be thrown, but actual exception was $caughtException");
 	}
 
 
