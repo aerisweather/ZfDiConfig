@@ -5,6 +5,7 @@ return [
 			[
 				'class' => '\Aeris\ZfDiConfig\ServiceManager\ConfigPlugin\FactoryPlugin',
 				'name' => '$factory',
+				'short_name' => '$factory:',
 			],
 			[
 				'class' => '\Aeris\ZfDiConfig\ServiceManager\ConfigPlugin\ServiceResolverPlugin',
