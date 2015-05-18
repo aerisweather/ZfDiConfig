@@ -8,7 +8,7 @@ Configurable dependency injection for the ZF2 ServiceManager.
 You can install ZfDiConfig using composer:
 
 ```
-composer require aeris-weather/zf-di-config
+composer require aeris/zf-di-config
 ```
 
 Then add the module to your application config:
