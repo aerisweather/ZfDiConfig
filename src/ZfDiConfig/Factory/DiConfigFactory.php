@@ -18,7 +18,7 @@ class DiConfigFactory implements FactoryInterface {
 	 * @return mixed
 	 */
 	public function createService(ServiceLocatorInterface $serviceLocator) {
-		$config = @$serviceLocator->get('config')['service_manager']['di'];
+		$config = @$serviceLocator->get('config')['service_manager']['di'] ?: [];
 		$diConfig = new DiConfig($config);
 
 		/** @var ConfigPluginManager $pluginManager */

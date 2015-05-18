@@ -18,5 +18,12 @@ return [
 				'short_name' => '%'
 			]
 		]
-	]
+	],
+	'service_manager' => [
+		'factories' => [
+			'Aeris\ZfDiConfig\ServiceManager\ConfigPlugin\ConfigPluginManager' => '\Aeris\ZfDiConfig\Factory\ConfigPluginManagerFactory',
+			'Aeris\ZfDiConfig\ServiceManager\DiConfig' => '\Aeris\ZfDiConfig\Factory\DiConfigFactory',
+			'Aeris\ZfDiConfig\Options\ZfDiConfigOptions' => '\Aeris\ZfDiConfig\Factory\ZfDiConfigOptionsFactory',
+		],
+	],
 ];

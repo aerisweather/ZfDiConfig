@@ -19,6 +19,7 @@ class ConfigPluginManagerFactory implements FactoryInterface {
 		$options = $serviceLocator->get('Aeris\ZfDiConfig\Options\ZfDiConfigOptions');
 
 		$pluginManager = new ConfigPluginManager();
+		$pluginManager->setServiceLocator($serviceLocator);
 
 		$pluginFqcns = $options->getPlugins();
 		foreach ($pluginFqcns as $pluginConfig) {
