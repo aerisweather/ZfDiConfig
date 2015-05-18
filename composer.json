@@ -1,6 +1,6 @@
 {
 	"name": "aeris/zf-di-config",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "Configurable dependency injection for the ZF2 ServiceManager",
 	"keywords": [
 		"ZF2",
@@ -21,7 +21,10 @@
 		"psr-4": {
 			"Aeris\\ZfDiConfig\\": "src/ZfDiConfig/",
             "Aeris\\ZfDiConfigTest\\": "test/ZfDiConfigTest/"
-		}
+		},
+		"classmap": [
+            "src/Module.php"
+        ]
 	},
 	"minimum-stability1": "dev"
 }
