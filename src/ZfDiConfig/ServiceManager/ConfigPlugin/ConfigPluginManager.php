@@ -25,29 +25,36 @@ class ConfigPluginManager {
 	 * @return mixed
 	 */
 	public function resolve($ref) {
+		// Ref is a string --> resolve from short name
 		if (is_string($ref)) {
 			$shortName = $this->getShortNameFromString($ref);
 			$configString = substr($ref, strlen($shortName));
 
 			$plugin = $this->getPluginByShortName($shortName);
 			$pluginConfig = $plugin->configFromString($configString);
+
+			return $plugin->resolve($pluginConfig);
 		}
-		else {
+
+		// Ref is an array
+		else if (is_array($ref)) {
 			// Plugin name should be first key in ref array
 			$refKeys = array_keys($ref);
-			$pluginName = reset($refKeys);
+			$hasStringKeys = is_string(reset($refKeys));
 
-			$plugin = @$this->plugins[$pluginName];
-
-			if (!$plugin) {
-				throw new InvalidConfigException("'$pluginName' is not a valid plugin.");
+			// Has numeric keys
+			// -- resolve as an array of plugins
+			if (!$hasStringKeys) {
+				return array_map(function($refItem) {
+					return $this->resolve($refItem);
+				}, $ref);
 			}
 
-			$pluginConfig = $ref[$pluginName];
+			$pluginName = reset($refKeys);
+			$plugin = $this->getPlugin($pluginName);
+			return $plugin->resolve($ref[$pluginName]);
 		}
-
-
-		return $plugin->resolve($pluginConfig);
+			throw new InvalidConfigException('Invalid reference of type ' . gettype($ref));
 	}
 
 	/**
@@ -97,6 +104,21 @@ class ConfigPluginManager {
 
 			return $isMatch ? $thisShortName : null;
 		}, null);
+	}
+
+	/**
+	 * @param string $name
+	 * @return ConfigPluginInterface
+	 * @throws InvalidConfigException
+	 */
+	protected function getPlugin($name) {
+		$plugin = $this->plugins[$name];
+
+		if (!$plugin) {
+			throw new InvalidConfigException("'$name' is not a valid plugin.");
+		}
+
+		return $plugin;
 	}
 
 	/** @return ConfigPluginInterface */

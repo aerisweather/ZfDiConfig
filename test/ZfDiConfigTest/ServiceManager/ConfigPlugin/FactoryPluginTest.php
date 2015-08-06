@@ -68,6 +68,25 @@ class FactoryPluginTest extends ConfigPluginTestCase {
 	}
 
 	/** @test */
+	public function shouldInjectAnArrayOfServices() {
+		$obj = $this->factoryPlugin->resolve([
+			'class' => '\Aeris\ZfDiConfigTest\ServiceManager\Mock\FooService',
+			'setters' => [
+				'bar' => [
+					'$=bbb',
+					'$=aaa',
+					'$=rrr'
+				]
+			]
+		]);
+
+		$this->assertCount(3, $obj->bar, 'Should have injected 2 services');
+		$this->assertEquals('bbb', $obj->bar[0]);
+		$this->assertSame('aaa', $obj->bar[1]);
+		$this->assertSame('rrr', $obj->bar[2]);
+	}
+
+	/** @test */
 	public function shouldInjectCtorArgs() {
 		$obj = $this->factoryPlugin->resolve([
 			'class' => '\Aeris\ZfDiConfigTest\ServiceManager\Mock\FooService',
