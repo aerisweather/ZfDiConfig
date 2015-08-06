@@ -33,43 +33,6 @@ class DiConfig implements  ConfigInterface {
 		}
 	}
 
-	protected function createServiceFactory($serviceConfig, ServiceLocatorInterface $serviceManager) {
-		return function() use ($serviceConfig, $serviceManager) {
-			if (isset($serviceConfig['args'])) {
-				$rClass = new \ReflectionClass($serviceConfig['class']);
-
-				$args = array_map(function($arg) use ($serviceManager) {
-					return $this->pluginManager->resolve($arg);
-				}, $serviceConfig['args']);
-
-				$service = $rClass->newInstanceArgs($args);
-			}
-			else {
-				$service = new $serviceConfig['class'];
-			}
-
-			if (isset($serviceConfig['setters'])) {
-				foreach ($serviceConfig['setters'] as $name => $serviceRef) {
-					$serviceToSet = $this->pluginManager->resolve($serviceRef);
-					$setterMethod = 'set' . ucfirst($name);
-					$service->$setterMethod($serviceToSet);
-				}
-			}
-
-			return $service;
-		};
-	}
-
-	protected function resolveReference($reference, ServiceLocatorInterface $serviceManager) {
-		$isServiceRef = substr($reference, 0, 1) === '@';
-
-		if (!$isServiceRef) {
-			throw new InvalidConfigException("Invalid reference '$reference'.");
-		}
-
-		$serviceName = substr($reference, 1);
-		return $serviceManager->get($serviceName);
-	}
 
 	/**
 	 * @param ConfigPluginManager $pluginManager
