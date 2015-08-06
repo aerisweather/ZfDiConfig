@@ -35,33 +35,10 @@ class DiConfigIntegrationTest extends \PHPUnit_Framework_TestCase {
 		return $diConfig;
 	}
 
-
 	/** @test */
-	public function shouldCreateAServiceAsAnInstanceOfAClass() {
+	public function shouldCreateAServiceWithInjectedServices() {
 		$diConfig = $this->createDiConfig([
-			'FooService' => [
-				'class' => '\Aeris\ZfDiConfigTest\ServiceManager\Mock\FooService'
-			]
-		]);
-		$diConfig->configureServiceManager($this->serviceManager);
-
-		$this->assertInstanceOf('\Aeris\ZfDiConfigTest\ServiceManager\Mock\FooService',
-			$this->serviceManager->get('FooService'));
-	}
-	/** @test */
-	public function shouldCreateAServiceAsAnInstanceOfAClass_shortHand() {
-		$diConfig = $this->createDiConfig([
-			'FooService' => '\Aeris\ZfDiConfigTest\ServiceManager\Mock\FooService'
-		]);
-		$diConfig->configureServiceManager($this->serviceManager);
-
-		$this->assertInstanceOf('\Aeris\ZfDiConfigTest\ServiceManager\Mock\FooService',
-			$this->serviceManager->get('FooService'));
-	}
-
-	/** @test */
-	public function shouldAllowNestedPlugins() {
-		$diConfig = $this->createDiConfig([
+			'BarService' => '\stdClass',
 			'FooService' => [
 				'class' => '\Aeris\ZfDiConfigTest\ServiceManager\Mock\FooService',
 				'args' => [
@@ -70,6 +47,9 @@ class DiConfigIntegrationTest extends \PHPUnit_Framework_TestCase {
 							'class' => '\Aeris\ZfDiConfigTest\ServiceManager\Mock\FooService'
 						]
 					]
+				],
+				'setters' => [
+					'bar' => '@BarService',
 				]
 			]
 		]);
@@ -80,84 +60,11 @@ class DiConfigIntegrationTest extends \PHPUnit_Framework_TestCase {
 		$this->assertInstanceOf('\Aeris\ZfDiConfigTest\ServiceManager\Mock\FooService', $fooService);
 
 		$this->assertInstanceOf('\Aeris\ZfDiConfigTest\ServiceManager\Mock\FooService',
-			$fooService->constructorArgs[0]);
-	}
+			$fooService->constructorArgs[0], 'Should allow nested factories');
 
-	/** @test */
-	public function shouldInjectServicesAsCtorArgs() {
-		$this->serviceManager
-			->setService('ServiceToInject', $serviceToInject = new \stdClass());
-
-		$diConfig = $this->createDiConfig([
-			'FooService' => [
-				'class' => '\Aeris\ZfDiConfigTest\ServiceManager\Mock\FooService',
-				'args' => ['@ServiceToInject']
-			]
-		]);
-		$diConfig->configureServiceManager($this->serviceManager);
-
-		/** @var FooService $fooService */
-		$fooService = $this->serviceManager->get('FooService');
-		$this->assertSame($serviceToInject, $fooService->constructorArgs[0]);
-	}
-
-	/** @test */
-	public function shouldInjectServicesUsingSetters() {
-		$this->serviceManager
-			->setService('BarService', $barService = new \stdClass());
-
-		$diConfig = $this->createDiConfig([
-			'FooService' => [
-				'class' => '\Aeris\ZfDiConfigTest\ServiceManager\Mock\FooService',
-				'setters' => [
-					'bar' => '@BarService'
-				]
-			]
-		]);
-		$diConfig->configureServiceManager($this->serviceManager);
-
-		/** @var FooService $fooService */
-		$fooService = $this->serviceManager->get('FooService');
-		$this->assertSame($barService, $fooService->bar);
-	}
-
-	/**
-	 * @test
-	 * @expectedException \Zend\ServiceManager\Exception\ServiceNotCreatedException
-	 */
-	public function shouldComplainAboutPoorlyFormattedReferences() {
-		$this->serviceManager
-			->setService('BarService', $barService = new \stdClass());
-
-		$diConfig = $this->createDiConfig([
-			'FooService' => [
-				'class' => '\Aeris\ZfDiConfigTest\ServiceManager\Mock\FooService',
-				'setters' => [
-					'bar' => 'BarService'  // missing @ to denote a service reference
-				]
-			]
-		]);
-		$diConfig->configureServiceManager($this->serviceManager);
-
-		$this->serviceManager->get('FooService');
-	}
-
-	/**
-	 * @test
-	 * @expectedException \Zend\ServiceManager\Exception\ServiceNotFoundException
-	 */
-	public function shouldComplainAboutReferencesToUndefinedServices() {
-		$diConfig = $this->createDiConfig([
-			'FooService' => [
-				'class' => '\Aeris\ZfDiConfigTest\ServiceManager\Mock\FooService',
-				'setters' => [
-					'bar' => '@NotAService'  // missing @ to denote a service reference
-				]
-			]
-		]);
-		$diConfig->configureServiceManager($this->serviceManager);
-
-		$this->serviceManager->get('FooService');
+		$barService = $this->serviceManager->get('BarService');
+		$this->assertInstanceOf('\stdClass', $barService, 'Should create an "invokable" service');
+		$this->assertSame($barService, $fooService->bar, 'Should inject services in other services');
 	}
 
 }
