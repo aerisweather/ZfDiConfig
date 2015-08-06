@@ -31,7 +31,7 @@ class DiConfigIntegrationTest extends \PHPUnit_Framework_TestCase {
 		$this->pluginManager->registerPlugin(new ServiceResolverPlugin(), '$service', '@');
 	}
 
-	protected function setUpDiConfig(array $config = []) {
+	protected function createDiConfig(array $config = []) {
 		$this->diConfig = new DiConfig($config);
 		$this->diConfig->setPluginManager($this->pluginManager);
 	}
@@ -39,7 +39,7 @@ class DiConfigIntegrationTest extends \PHPUnit_Framework_TestCase {
 
 	/** @test */
 	public function shouldCreateAServiceAsAnInstanceOfAClass() {
-		$this->setUpDiConfig([
+		$this->createDiConfig([
 			'FooService' => [
 				'class' => '\Aeris\ZfDiConfigTest\ServiceManager\Mock\FooService'
 			]
@@ -51,7 +51,7 @@ class DiConfigIntegrationTest extends \PHPUnit_Framework_TestCase {
 	}
 	/** @test */
 	public function shouldCreateAServiceAsAnInstanceOfAClass_shortHand() {
-		$this->setUpDiConfig([
+		$this->createDiConfig([
 			'FooService' => '\Aeris\ZfDiConfigTest\ServiceManager\Mock\FooService'
 		]);
 		$this->diConfig->configureServiceManager($this->serviceManager);
@@ -62,7 +62,7 @@ class DiConfigIntegrationTest extends \PHPUnit_Framework_TestCase {
 
 	/** @test */
 	public function shouldAllowNestedPlugins() {
-		$this->setUpDiConfig([
+		$this->createDiConfig([
 			'FooService' => [
 				'class' => '\Aeris\ZfDiConfigTest\ServiceManager\Mock\FooService',
 				'args' => [
@@ -89,7 +89,7 @@ class DiConfigIntegrationTest extends \PHPUnit_Framework_TestCase {
 		$this->serviceManager
 			->setService('ServiceToInject', $serviceToInject = new \stdClass());
 
-		$this->setUpDiConfig([
+		$this->createDiConfig([
 			'FooService' => [
 				'class' => '\Aeris\ZfDiConfigTest\ServiceManager\Mock\FooService',
 				'args' => ['@ServiceToInject']
@@ -107,7 +107,7 @@ class DiConfigIntegrationTest extends \PHPUnit_Framework_TestCase {
 		$this->serviceManager
 			->setService('BarService', $barService = new \stdClass());
 
-		$this->setUpDiConfig([
+		$this->createDiConfig([
 			'FooService' => [
 				'class' => '\Aeris\ZfDiConfigTest\ServiceManager\Mock\FooService',
 				'setters' => [
@@ -130,7 +130,7 @@ class DiConfigIntegrationTest extends \PHPUnit_Framework_TestCase {
 		$this->serviceManager
 			->setService('BarService', $barService = new \stdClass());
 
-		$this->setUpDiConfig([
+		$this->createDiConfig([
 			'FooService' => [
 				'class' => '\Aeris\ZfDiConfigTest\ServiceManager\Mock\FooService',
 				'setters' => [
@@ -148,7 +148,7 @@ class DiConfigIntegrationTest extends \PHPUnit_Framework_TestCase {
 	 * @expectedException \Zend\ServiceManager\Exception\ServiceNotFoundException
 	 */
 	public function shouldComplainAboutReferencesToUndefinedServices() {
-		$this->setUpDiConfig([
+		$this->createDiConfig([
 			'FooService' => [
 				'class' => '\Aeris\ZfDiConfigTest\ServiceManager\Mock\FooService',
 				'setters' => [
