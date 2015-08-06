@@ -1,3 +1,7 @@
+# v1.1.0
+
+* ADD: Support arrays of references.
+
 # v1.0.2
 
 * FIX: Was missing service manager configuration for all ZfDiConfig services.
