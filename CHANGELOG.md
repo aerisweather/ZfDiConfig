@@ -1,3 +1,7 @@
+# v1.2.1
+
+* ADD: Configure `Aeris\ZfDiConfig\ServiceManager` service (application service manager)
+
 # v1.2.0
 
 * ADD: Support using plugins other that `$factory` for top-level service definitions.

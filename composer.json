@@ -1,6 +1,6 @@
 {
 	"name": "aeris/zf-di-config",
-	"version": "1.2.0",
+	"version": "1.2.1",
 	"description": "Configurable dependency injection for the ZF2 ServiceManager",
 	"keywords": [
 		"ZF2",
