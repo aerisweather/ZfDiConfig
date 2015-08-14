@@ -11,7 +11,7 @@ class ConfigPluginManager {
 	protected $serviceLocator;
 
 	/** @var ConfigPluginInterface[] */
-	protected $plugins =[];
+	protected $plugins = [];
 
 	/**
 	 * Map of plugin short names to long names
@@ -45,7 +45,7 @@ class ConfigPluginManager {
 			// Has numeric keys
 			// -- resolve as an array of plugins
 			if (!$hasStringKeys) {
-				return array_map(function($refItem) {
+				return array_map(function ($refItem) {
 					return $this->resolve($refItem);
 				}, $ref);
 			}
@@ -54,7 +54,7 @@ class ConfigPluginManager {
 			$plugin = $this->getPlugin($pluginName);
 			return $plugin->resolve($ref[$pluginName]);
 		}
-			throw new InvalidConfigException('Invalid reference of type ' . gettype($ref));
+		throw new InvalidConfigException('Invalid reference of type ' . gettype($ref));
 	}
 
 	/**
@@ -90,11 +90,11 @@ class ConfigPluginManager {
 		$shortNames = array_keys($this->pluginShortNames);
 
 		// Sort by longest first
-		usort($shortNames, function($a, $b) {
+		usort($shortNames, function ($a, $b) {
 			return strlen($b) - strlen($a);
 		});
 
-		return array_reduce($shortNames, function($foundShortName, $thisShortName) use ($configString) {
+		return array_reduce($shortNames, function ($foundShortName, $thisShortName) use ($configString) {
 			if (!is_null($foundShortName)) {
 				return $foundShortName;
 			}
