@@ -6,7 +6,7 @@ namespace Aeris\ZfDiConfigTest\Fixture\ConfigPlugin;
 
 use Aeris\ZfDiConfig\ServiceManager\ConfigPlugin\AbstractConfigPlugin;
 
-class PassThroughStringPlugin extends AbstractConfigPlugin {
+class StringPlugin extends AbstractConfigPlugin {
 
 	/**
 	 * @param string|array $config

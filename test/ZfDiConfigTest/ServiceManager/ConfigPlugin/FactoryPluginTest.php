@@ -6,7 +6,7 @@ namespace Aeris\ZfDiConfigTest\ServiceManager\ConfigPlugin;
 
 use Aeris\ZfDiConfig\ServiceManager\ConfigPlugin\ConfigPluginManager;
 use Aeris\ZfDiConfig\ServiceManager\ConfigPlugin\FactoryPlugin;
-use Aeris\ZfDiConfigTest\Fixture\ConfigPlugin\PassThroughStringPlugin;
+use Aeris\ZfDiConfigTest\Fixture\ConfigPlugin\StringPlugin;
 use Zend\ServiceManager\ServiceManager;
 
 class FactoryPluginTest extends ConfigPluginTestCase {
@@ -28,7 +28,7 @@ class FactoryPluginTest extends ConfigPluginTestCase {
 		$this->factoryPlugin = new FactoryPlugin();
 
 		$this->pluginManager->registerPlugin($this->factoryPlugin, '$factory', '$factory::');
-		$this->pluginManager->registerPlugin(new PassThroughStringPlugin(), '$=', '$=');
+		$this->pluginManager->registerPlugin(new StringPlugin(), '$=', '$=');
 	}
 
 	/** @test */

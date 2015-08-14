@@ -6,6 +6,7 @@ use Aeris\ZfDiConfig\ServiceManager\ConfigPlugin\ConfigPluginManager;
 use Aeris\ZfDiConfig\ServiceManager\ConfigPlugin\FactoryPlugin;
 use Aeris\ZfDiConfig\ServiceManager\ConfigPlugin\ServiceResolverPlugin;
 use Aeris\ZfDiConfig\ServiceManager\DiConfig;
+use Aeris\ZfDiConfigTest\Fixture\ConfigPlugin\StringPlugin;
 use Aeris\ZfDiConfigTest\ServiceManager\Mock\FooService;
 use Zend\ServiceManager\ServiceManager;
 
@@ -26,6 +27,7 @@ class DiConfigIntegrationTest extends \PHPUnit_Framework_TestCase {
 		$this->pluginManager->setServiceLocator($this->serviceManager);
 		$this->pluginManager->registerPlugin(new FactoryPlugin(), '$factory');
 		$this->pluginManager->registerPlugin(new ServiceResolverPlugin(), '$service', '@');
+		$this->pluginManager->registerPlugin(new StringPlugin(), '$=', '$=');
 	}
 
 	protected function createDiConfig(array $config = []) {
