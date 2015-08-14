@@ -25,6 +25,7 @@ return [
 			'Aeris\ZfDiConfig\ServiceManager\ConfigPlugin\ConfigPluginManager' => '\Aeris\ZfDiConfig\Factory\ConfigPluginManagerFactory',
 			'Aeris\ZfDiConfig\ServiceManager\DiConfig' => '\Aeris\ZfDiConfig\Factory\DiConfigFactory',
 			'Aeris\ZfDiConfig\Options\ZfDiConfigOptions' => '\Aeris\ZfDiConfig\Factory\ZfDiConfigOptionsFactory',
+			'Aeris\ZfDiConfig\ServiceManager' => '\Aeris\ZfDiConfig\Factory\ServiceManagerFactory',
 		],
 	],
 ];
