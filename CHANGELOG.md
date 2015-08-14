@@ -1,3 +1,7 @@
+# v1.2.0
+
+* ADD: Support using plugins other that `$factory` for top-level service definitions.
+
 # v1.1.0
 
 * ADD: Support arrays of references.
