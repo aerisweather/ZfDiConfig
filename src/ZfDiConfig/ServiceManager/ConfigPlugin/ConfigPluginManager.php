@@ -3,6 +3,7 @@ namespace Aeris\ZfDiConfig\ServiceManager\ConfigPlugin;
 
 
 use Aeris\ZfDiConfig\ServiceManager\Exception\InvalidConfigException;
+use Aeris\ZfDiConfig\ServiceManager\PluginConfig\PluginConfig;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 class ConfigPluginManager {
@@ -20,41 +21,47 @@ class ConfigPluginManager {
 	 */
 	protected $pluginShortNames = [];
 
+	public function canResolve($ref) {
+		$ref = $this->normalizeRef($ref);
+
+		return $ref->name !== null && isset($this->plugins[$ref->name]);
+	}
+
+	/** @return PluginConfig */
+	protected function normalizeRef($ref) {
+		if (is_string($ref)) {
+			$shortName = $this->getShortNameFromString($ref);
+			$pluginName = @$this->pluginShortNames[$shortName];
+
+			$configString = substr($ref, strlen($shortName));
+
+			$plugin = $this->getPluginByShortName($shortName);
+			$pluginConfig = $plugin ? $plugin->configFromString($configString) : null;
+		}
+		else if (is_array($ref)) {
+			$refKeys = array_keys($ref);
+			$pluginName = reset($refKeys);
+			$pluginConfig = @$ref[$pluginName];
+		}
+		else {
+			throw new InvalidConfigException('Invalid reference of type ' . gettype($ref));
+		}
+
+		return new PluginConfig($pluginName, $pluginConfig);
+	}
+
 	/**
 	 * @param string|array $ref
 	 * @return mixed
 	 */
 	public function resolve($ref) {
-		// Ref is a string --> resolve from short name
-		if (is_string($ref)) {
-			$shortName = $this->getShortNameFromString($ref);
-			$configString = substr($ref, strlen($shortName));
-
-			$plugin = $this->getPluginByShortName($shortName);
-			$pluginConfig = $plugin->configFromString($configString);
-
-			return $plugin->resolve($pluginConfig);
+		if (!$this->canResolve($ref)) {
+			throw new InvalidConfigException("Invalid plugin reference: " . json_encode($ref));
 		}
 
-		// Ref is an array
-		else if (is_array($ref)) {
-			// Plugin name should be first key in ref array
-			$refKeys = array_keys($ref);
-			$hasStringKeys = is_string(reset($refKeys));
-
-			// Has numeric keys
-			// -- resolve as an array of plugins
-			if (!$hasStringKeys) {
-				return array_map(function ($refItem) {
-					return $this->resolve($refItem);
-				}, $ref);
-			}
-
-			$pluginName = reset($refKeys);
-			$plugin = $this->getPlugin($pluginName);
-			return $plugin->resolve($ref[$pluginName]);
-		}
-		throw new InvalidConfigException('Invalid reference of type ' . gettype($ref));
+		$config = $this->normalizeRef($ref);
+		$plugin = $this->getPlugin($config->name);
+		return $plugin->resolve($config->config);
 	}
 
 	/**
@@ -62,25 +69,6 @@ class ConfigPluginManager {
 	 * @return [ConfigPluginInterface, array]
 	 * @throws InvalidConfigException
 	 */
-	protected function getPluginAndConfig($config) {
-		if (is_string($config)) {
-			$shortName = $this->getShortNameFromString($config);
-			$configString = substr($config, strlen($shortName));
-
-			$plugin = $this->getPluginByShortName($shortName);
-			return [$plugin, $plugin->configFromString($configString)];
-		}
-
-		$configKeys = array_keys($config);
-		$pluginName = reset($configKeys);
-		$plugin = $this->plugins[$pluginName];
-
-		if (!$plugin) {
-			throw new InvalidConfigException("'$pluginName' is not a valid plugin.");
-		}
-
-		return [$plugin, $config[$pluginName]];
-	}
 
 	/**
 	 * @param string $configString
@@ -112,11 +100,7 @@ class ConfigPluginManager {
 	 * @throws InvalidConfigException
 	 */
 	protected function getPlugin($name) {
-		$plugin = $this->plugins[$name];
-
-		if (!$plugin) {
-			throw new InvalidConfigException("'$name' is not a valid plugin.");
-		}
+		$plugin = @$this->plugins[$name];
 
 		return $plugin;
 	}
@@ -125,11 +109,7 @@ class ConfigPluginManager {
 	protected function getPluginByShortName($shortName) {
 		$pluginName = @$this->pluginShortNames[$shortName];
 
-		if (is_null($pluginName) || !isset($this->plugins[$pluginName])) {
-			throw new InvalidConfigException("'$shortName' is not a valid plugin short name.");
-		}
-
-		return $this->plugins[$pluginName];
+		return @$this->plugins[$pluginName];
 	}
 
 	public function registerPlugin(ConfigPluginInterface $plugin, $name, $shortName = null) {

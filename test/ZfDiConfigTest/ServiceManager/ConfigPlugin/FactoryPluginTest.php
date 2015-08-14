@@ -7,6 +7,7 @@ namespace Aeris\ZfDiConfigTest\ServiceManager\ConfigPlugin;
 use Aeris\ZfDiConfig\ServiceManager\ConfigPlugin\ConfigPluginManager;
 use Aeris\ZfDiConfig\ServiceManager\ConfigPlugin\FactoryPlugin;
 use Aeris\ZfDiConfigTest\Fixture\ConfigPlugin\StringPlugin;
+use Aeris\ZfDiConfigTest\ServiceManager\Mock\FooService;
 use Zend\ServiceManager\ServiceManager;
 
 class FactoryPluginTest extends ConfigPluginTestCase {
@@ -68,7 +69,7 @@ class FactoryPluginTest extends ConfigPluginTestCase {
 	}
 
 	/** @test */
-	public function shouldInjectAnArrayOfServices() {
+	public function shouldInjectAnArrayOfServices_setters() {
 		$obj = $this->factoryPlugin->resolve([
 			'class' => '\Aeris\ZfDiConfigTest\ServiceManager\Mock\FooService',
 			'setters' => [
@@ -84,6 +85,24 @@ class FactoryPluginTest extends ConfigPluginTestCase {
 		$this->assertEquals('bbb', $obj->bar[0]);
 		$this->assertSame('aaa', $obj->bar[1]);
 		$this->assertSame('rrr', $obj->bar[2]);
+	}
+
+	/** @test */
+	public function shouldInjectAnArrayOfServices_args() {
+		/** @var FooService $obj */
+		$obj = $this->factoryPlugin->resolve([
+			'class' => '\Aeris\ZfDiConfigTest\ServiceManager\Mock\FooService',
+			'args' => [
+				'$=bbb',
+				'$=aaa',
+				'$=rrr'
+			]
+		]);
+
+		$this->assertCount(3, $obj->constructorArgs, 'Should have injected 2 services');
+		$this->assertEquals('bbb', $obj->constructorArgs[0]);
+		$this->assertSame('aaa', $obj->constructorArgs[1]);
+		$this->assertSame('rrr', $obj->constructorArgs[2]);
 	}
 
 	/** @test */

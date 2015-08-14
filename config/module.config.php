@@ -1,6 +1,7 @@
 <?php
 return [
 	'zf_di_config' => [
+		'default_plugin' => '$factory',
 		'plugins' => [
 			[
 				'class' => '\Aeris\ZfDiConfig\ServiceManager\ConfigPlugin\FactoryPlugin',

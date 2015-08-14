@@ -133,6 +133,44 @@ Most plugins allow either a short or long form of configuration. For example, th
 ]
 ```
 
+### Default Plugin
+
+By default, ZfDiConfig uses the `$factory` plugin for configuring services, so that:
+
+```php
+[
+	'FooService' => '\App\Service\Foo'
+]
+```
+
+...is the same as...
+
+```php
+[
+	'FooService' => [
+		'$factory' => '\App\Service\Foo'
+	]
+]
+```
+
+If you do not want to define your service using the `$factory` plugin, there are a couple of options. For one, you can just use a different plugin, and `DiConfig` will be smart enough to figure it out.
+
+```php
+[
+	'FooConfig' => '%my_app.options.foo'  // DiConfig won't try to use $factory here
+]
+```
+
+You can also override the global default plugin, in the `zf_di_config` module config:
+
+```php
+[
+	'zf_di_config' => [
+		'default_plugin' => '$myAwesomePlugin',
+		'plugins' => [...]
+	]
+]
+```
 
 ### FactoryPlugin
 

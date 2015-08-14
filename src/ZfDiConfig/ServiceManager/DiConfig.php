@@ -8,13 +8,16 @@ use Zend\ServiceManager\ConfigInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\ServiceManager\ServiceManager;
 
-class DiConfig implements  ConfigInterface {
+class DiConfig implements ConfigInterface {
 
 	/** @var ConfigPluginManager */
 	protected $pluginManager;
 
 	/** @var array */
 	protected $config;
+
+	/** @var string */
+	protected $defaultPlugin;
 
 	public function __construct(array $config = []) {
 		$this->config = $config;
@@ -23,13 +26,12 @@ class DiConfig implements  ConfigInterface {
 
 	public function configureServiceManager(ServiceManager $serviceManager) {
 		foreach ($this->config as $serviceName => $serviceConfig) {
-			// Create all services using the $factory plugin
-			$factory = function() use ($serviceConfig) {
-				return $this->pluginManager->resolve([
-					'$factory' => $serviceConfig,
-				]);
-			};
-			$serviceManager->setFactory($serviceName, $factory);
+			$serviceManager->setFactory($serviceName, function () use ($serviceConfig) {
+				$serviceConfig = $this->pluginManager->canResolve($serviceConfig) ?
+					$serviceConfig : [$this->defaultPlugin => $serviceConfig];
+
+				return $this->pluginManager->resolve($serviceConfig);
+			});
 		}
 	}
 
@@ -39,6 +41,13 @@ class DiConfig implements  ConfigInterface {
 	 */
 	public function setPluginManager(ConfigPluginManager $pluginManager) {
 		$this->pluginManager = $pluginManager;
+	}
+
+	/**
+	 * @param string $defaultPlugin Name of the default plugin
+	 */
+	public function setDefaultPlugin($defaultPlugin) {
+		$this->defaultPlugin = $defaultPlugin;
 	}
 
 }

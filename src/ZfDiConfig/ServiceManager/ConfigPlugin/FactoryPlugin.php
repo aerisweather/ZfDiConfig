@@ -21,23 +21,35 @@ class FactoryPlugin extends AbstractConfigPlugin {
 			// Create service with constructor arguments
 			$rClass = new \ReflectionClass($config['class']);
 
-			$args = array_map(function($arg) {
-				return $this->pluginManager->resolve($arg);
-			}, $config['args']);
+			$args = array_map([$this, 'resolveArg'], $config['args']);
 
 			$service = $rClass->newInstanceArgs($args);
 		}
 
 		// Run setters
 		if (isset($config['setters'])) {
-			foreach ($config['setters'] as $name => $serviceRef) {
-				$serviceToSet = $this->pluginManager->resolve($serviceRef);
-				$setterMethod = 'set' . ucfirst($name);
+			foreach ($config['setters'] as $propName => $arg) {
+				$serviceToSet = $this->resolveArg($arg);
+				$setterMethod = 'set' . ucfirst($propName);
 				$service->$setterMethod($serviceToSet);
 			}
 		}
 
 		return $service;
+	}
+
+	protected function resolveArg($arg) {
+		if (!is_array($arg)) {
+			return $this->pluginManager->resolve($arg);
+		}
+		$keys = array_keys($arg);
+		$isArrayOfRefs = !is_string(reset($keys));
+
+		if ($isArrayOfRefs) {
+			return array_map([$this, 'resolveArg'], $arg);
+		}
+
+		return $this->pluginManager->resolve($arg);
 	}
 
 	public function configFromString($string) {

@@ -33,6 +33,7 @@ class DiConfigIntegrationTest extends \PHPUnit_Framework_TestCase {
 	protected function createDiConfig(array $config = []) {
 		$diConfig = new DiConfig($config);
 		$diConfig->setPluginManager($this->pluginManager);
+		$diConfig->setDefaultPlugin('$factory');
 		
 		return $diConfig;
 	}
@@ -67,6 +68,41 @@ class DiConfigIntegrationTest extends \PHPUnit_Framework_TestCase {
 		$barService = $this->serviceManager->get('BarService');
 		$this->assertInstanceOf('\stdClass', $barService, 'Should create an "invokable" service');
 		$this->assertSame($barService, $fooService->bar, 'Should inject services in other services');
+	}
+
+	/** @test */
+	public function shouldAcceptAPluginAtTheTopLevel_longPluginName() {
+		$diConfig = $this->createDiConfig([
+			'FooString' => [
+				'$=' => ['val' => 'foo']
+			]
+		]);
+		$diConfig->configureServiceManager($this->serviceManager);
+
+		$this->assertEquals('foo', $this->serviceManager->get('FooString'));
+	}
+
+	/** @test */
+	public function shouldAcceptAPluginAtTheTopLevel_shortPluginName() {
+		$diConfig = $this->createDiConfig([
+			'FooString' => '$=foo'
+		]);
+		$diConfig->configureServiceManager($this->serviceManager);
+
+		$this->assertEquals('foo', $this->serviceManager->get('FooString'));
+	}
+
+	/** @test */
+	public function shouldUseACustomDefaultPlugin() {
+		$diConfig = $this->createDiConfig([
+			'FooString' => [
+				'val' => 'foo'
+			]
+		]);
+		$diConfig->setDefaultPlugin('$=');
+		$diConfig->configureServiceManager($this->serviceManager);
+
+		$this->assertEquals('foo', $this->serviceManager->get('FooString'));
 	}
 
 }

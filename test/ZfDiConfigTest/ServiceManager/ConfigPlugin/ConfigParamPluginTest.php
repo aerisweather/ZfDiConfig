@@ -16,6 +16,7 @@ class ConfigParamPluginTest extends ConfigPluginTestCase {
 	protected $plugin;
 
 	protected function setUp() {
+		$x = [null => 'bar'];
 		parent::setUp();
 
 		$this->plugin = new ConfigParamPlugin();
