@@ -1,3 +1,7 @@
+# v1.3.0
+
+* ADD: New `$serviceManager` plugin
+
 # v1.2.1
 
 * ADD: Configure `Aeris\ZfDiConfig\ServiceManager` service (application service manager)
