@@ -5,6 +5,8 @@ namespace Aeris\ZfDiConfigTest\ServiceManager\ConfigPlugin;
 
 
 use Aeris\ZfDiConfig\Options\ZfDiConfigOptions;
+use Aeris\ZfDiConfig\ServiceManager\ConfigPlugin\ConfigParamPlugin;
+use Aeris\ZfDiConfig\ServiceManager\ConfigPlugin\FactoryPlugin;
 use Aeris\ZfDiConfig\ServiceManager\ConfigPlugin\ServiceManagerPlugin;
 use Aeris\ZfDiConfigTest\Fixture\ConfigPlugin\StringPlugin;
 use Zend\ServiceManager\AbstractPluginManager;
@@ -18,9 +20,9 @@ class ServiceManagerTest extends ConfigPluginTestCase {
 		parent::setUp();
 
 		$this->serviceManagerPlugin = new ServiceManagerPlugin();
-		$this->serviceManagerPlugin->setServiceLocator($this->serviceManager);
-		$this->serviceManagerPlugin->setPluginManager($this->pluginManager);
+		$this->pluginManager->registerPlugin($this->serviceManagerPlugin, '$serviceManager');
 
+		$this->pluginManager->registerPlugin(new FactoryPlugin(), '$factory', '$factory');
 		$this->serviceManager->setService('Aeris\ZfDiConfig\Options\ZfDiConfigOptions', new ZfDiConfigOptions([
 			'default_plugin' => '$factory'
 		]));
@@ -86,24 +88,18 @@ class ServiceManagerTest extends ConfigPluginTestCase {
 	public function shouldAcceptDiConfigWithRegisteredPlugins() {
 		$this->pluginManager->registerPlugin(new StringPlugin(), '$=', '$=');
 
-		/** @var ZfDiConfigOptions $options */
-		$options = $this->serviceManager->get('Aeris\ZfDiConfig\Options\ZfDiConfigOptions');
-		$options->setDefaultPlugin('$=');
-
 		/** @var AbstractPluginManager $serviceManager */
 		$serviceManager = $this->serviceManagerPlugin->resolve([
 			'config' => [
 				'di' => [
 					'foo' => '$=bar',
-					'faz' => [
-						'val' => 'baz'
-					]
+					'now' => '\DateTime'
 				]
 			]
 		]);
 
 		$this->assertEquals('bar', $serviceManager->get('foo'));
-		$this->assertEquals('baz', $serviceManager->get('faz'), 'should use default plugin');
+		$this->assertInstanceOf('\DateTime', $serviceManager->get('now'), 'should use default $factory plugin');
 	}
 
 	/** @test */
@@ -112,6 +108,25 @@ class ServiceManagerTest extends ConfigPluginTestCase {
 		$serviceManager = $this->serviceManagerPlugin->resolve([]);
 
 		$this->assertSame($serviceManager->getServiceLocator(), $this->serviceManager);
+	}
+
+	/** @test */
+	public function shouldAcceptConfigReferences() {
+		$this->pluginManager->registerPlugin(new ConfigParamPlugin(), '%', '%');
+
+		$this->serviceManager->setService('config', [
+			'my_conf' => [
+				'invokables' => [
+					'now' => '\DateTime'
+				]
+			]
+		]);
+
+		$serviceManager = $this->serviceManagerPlugin->resolve([
+			'config' => '%my_conf'
+		]);
+
+		$this->assertInstanceOf('\DateTime', $serviceManager->get('now'));
 	}
 
 }

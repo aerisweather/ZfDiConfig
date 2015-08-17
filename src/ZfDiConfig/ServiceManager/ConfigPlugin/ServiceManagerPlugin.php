@@ -17,10 +17,14 @@ class ServiceManagerPlugin extends AbstractConfigPlugin{
 	 * @return mixed
 	 */
 	public function resolve($config) {
-		$serviceManager = new ServiceManager(new Config(@$config['config'] ?: []));
+		$serviceManagerConfig = @$config['config'] ?: [];
+		$serviceManagerConfig = is_string($serviceManagerConfig) ?
+			$this->pluginManager->resolve($serviceManagerConfig) : $serviceManagerConfig;
+
+		$serviceManager = new ServiceManager(new Config($serviceManagerConfig));
 
 		// Parse `di` config for service manager
-		$diConfig = $this->createDiConfig(@$config['config']['di'] ?: []);
+		$diConfig = $this->createDiConfig(@$serviceManagerConfig['di'] ?: []);
 		$diConfig->configureServiceManager($serviceManager);
 
 		$serviceManager->setServiceType(@$config['service_type']);

@@ -308,7 +308,9 @@ The ServiceManagerPlugin allows you to create a service manager plugin on the fl
 					'args' => ['%my_app.bar']
 				]
 			]
-		]
+		],
+		// or, you could use a config reference
+		// 'config' => '%my_app.custom_manager'
 	]
 ]
 ```
