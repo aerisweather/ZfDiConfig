@@ -3,10 +3,8 @@
 namespace Aeris\ZfDiConfig\ServiceManager;
 
 use Aeris\ZfDiConfig\ServiceManager\ConfigPlugin\ConfigPluginManager;
-use Aeris\ZfDiConfig\ServiceManager\Exception\InvalidConfigException;
 use Zend\ServiceManager\ConfigInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\ServiceManager\ServiceManager;
+use Zend\ServiceManager\ServiceManager as ZendServiceManager;
 
 class DiConfig implements ConfigInterface {
 
@@ -24,7 +22,7 @@ class DiConfig implements ConfigInterface {
 	}
 
 
-	public function configureServiceManager(ServiceManager $serviceManager) {
+	public function configureServiceManager(ZendServiceManager $serviceManager) {
 		foreach ($this->config as $serviceName => $serviceConfig) {
 			$serviceManager->setFactory($serviceName, function () use ($serviceConfig) {
 				$serviceConfig = $this->pluginManager->canResolve($serviceConfig) ?

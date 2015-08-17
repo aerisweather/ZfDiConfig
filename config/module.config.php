@@ -17,6 +17,10 @@ return [
 				'class' => '\Aeris\ZfDiConfig\ServiceManager\ConfigPlugin\ConfigParamPlugin',
 				'name' => '$param',
 				'short_name' => '%'
+			],
+			[
+				'class' => '\Aeris\ZfDiConfig\ServiceManager\ConfigPlugin\ServiceManagerPlugin',
+				'name' => '$serviceManager',
 			]
 		]
 	],

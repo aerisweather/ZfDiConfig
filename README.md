@@ -285,6 +285,34 @@ The `ConfigParamPlugin` allows you to access raw values from you application con
 ```
 
 
+### ServiceManagerPlugin
+
+The ServiceManagerPlugin allows you to create a service manager plugin on the fly. The created service manager may be configured with ZfDiConfig, just like your top level service manager.
+
+#### Configuration reference
+
+```php
+[
+	'$serviceManager' => [
+		// Will validate all services of this service manager as belonging
+		// to SomeInterface
+		'service_type' => '\MyApp\SomeInterface',
+		'config' => [
+			'invokables' => [
+				'Foo' => '\MyApp\Foo'
+			],
+			// You can use ZfDiConfig here, too!
+			'di' => [
+				'Bar' => [
+					'class' => '\Bar',
+					'args' => ['%my_app.bar']
+				]
+			]
+		]
+	]
+]
+```
+
 
 ## Extending ZfDiConfig
 
