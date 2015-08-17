@@ -1,3 +1,7 @@
+# v1.3.1
+
+* FIX: `$serviceManager` plugin accepts DI reference as `config`
+
 # v1.3.0
 
 * ADD: New `$serviceManager` plugin
