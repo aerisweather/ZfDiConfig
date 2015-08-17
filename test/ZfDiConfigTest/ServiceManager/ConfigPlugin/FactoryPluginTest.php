@@ -21,8 +21,6 @@ class FactoryPluginTest extends ConfigPluginTestCase {
 	protected function setUp() {
 		parent::setUp();
 
-		$this->serviceManager = new ServiceManager();
-
 		$this->pluginManager = new ConfigPluginManager();
 		$this->pluginManager->setServiceLocator($this->serviceManager);
 
