@@ -15,7 +15,7 @@ class DiConfig implements ConfigInterface {
 	protected $config;
 
 	/** @var string */
-	protected $defaultPlugin;
+	protected $defaultPlugin = '$factory';
 
 
 	public function __construct(array $config = []) {
