@@ -46,4 +46,9 @@ class ServiceManager extends AbstractPluginManager {
 	public function setServiceType($serviceType) {
 		$this->serviceType = $serviceType;
 	}
+
+	public function getAllServices() {
+		$cNames = $this->getCanonicalNames();
+		return array_map([$this, 'get'], $cNames);
+	}
 }
