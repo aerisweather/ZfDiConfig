@@ -17,12 +17,18 @@ class DiConfig implements ConfigInterface {
 	/** @var string */
 	protected $defaultPlugin;
 
+
 	public function __construct(array $config = []) {
 		$this->config = $config;
 	}
 
 
 	public function configureServiceManager(ZendServiceManager $serviceManager) {
+		// Allow using DI config to override services configured elsewhere
+		// Otherwise, configs from different modules won't "merge" properly
+		$allowOverride_orig = $serviceManager->getAllowOverride();
+		$serviceManager->setAllowOverride(true);
+
 		foreach ($this->config as $serviceName => $serviceConfig) {
 			$serviceManager->setFactory($serviceName, function () use ($serviceConfig) {
 				$serviceConfig = $this->pluginManager->canResolve($serviceConfig) ?
@@ -31,6 +37,8 @@ class DiConfig implements ConfigInterface {
 				return $this->pluginManager->resolve($serviceConfig);
 			});
 		}
+
+		$serviceManager->setAllowOverride($allowOverride_orig);
 	}
 
 
