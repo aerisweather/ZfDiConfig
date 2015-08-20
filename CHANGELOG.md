@@ -1,3 +1,9 @@
+# v1.3.2
+
+* ADD: `ServiceManager::getAllServices`
+* FIX: Allow DI config for same service from multiple modules
+* FIX: Ensure default plugin is set
+
 # v1.3.1
 
 * FIX: `$serviceManager` plugin accepts DI reference as `config`
